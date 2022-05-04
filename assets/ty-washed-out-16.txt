@@ -1,0 +1,21 @@
+;paint.net Palette File
+;Downloaded from Lospec.com/palette-list
+;Palette Name: TY - Washed Out 16
+;Description: ~~~ A palette i made on a whim, built upon my other palette Chill &amp; Wave 6.
+;Colors: 16
+FFcfcfcf
+FF86aacf
+FF5c7781
+FF444760
+FFdbb958
+FF84954c
+FF41655a
+FF353535
+FFc59e77
+FFc5824d
+FF856b3e
+FF5a4439
+FF8a7f6c
+FF814e4a
+FF452727
+FF000000
