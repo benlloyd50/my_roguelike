@@ -1,7 +1,7 @@
 import tcod
 import numpy as np # type: ignore
 
-from gamemap import GameMap, water
+from gamemap import GameMap
 from entity import Entity
 from typing import List
 
@@ -28,7 +28,7 @@ def main() -> None:
 
     entities = [player, bard] 
 
-    gamemap = GameMap(MAP_WIDTH, MAP_HEIGHT)
+    gamemap = GameMap(MAP_WIDTH, MAP_HEIGHT, entities)
 
     # Create a window based on this console and tileset.
     with tcod.context.new_terminal(
@@ -41,7 +41,7 @@ def main() -> None:
         root_console = tcod.Console(WIDTH, HEIGHT, order="F")
         while True:  # Main loop, runs until SystemExit is raised.
             root_console.clear() #wipes the console to just black space
-            render(entities, root_console, gamemap)
+            on_render(root_console, gamemap)
             context.present(root_console)  # Show the console.
 
             # This event loop will wait until at least one event is processed before exiting.
@@ -53,23 +53,21 @@ def main() -> None:
                     raise SystemExit()
                 elif isinstance(event, tcod.event.KeyDown):
                     if event.sym in MOVECOMMANDS:
-                        player.x += MOVECOMMANDS[event.sym][0]
-                        player.y += MOVECOMMANDS[event.sym][1]
+                        if can_player_move(player, gamemap): 
+                            player.x += MOVECOMMANDS[event.sym][0]
+                            player.y += MOVECOMMANDS[event.sym][1]
+                        else:
+                            print("You can't walk")
                     elif event.sym is tcod.event.KeySym.ESCAPE:
                         raise SystemExit()
         # The window will be closed after the above with-block exits.
 
 
-def render(entities: List[Entity], console: tcod.Console, gamemap: GameMap):
-    #render some sort of map
-    #somehow is not the same size??
+def can_player_move(player: Entity, gamemap: GameMap) -> bool:
+    return gamemap.is_loc_walkable(player.x, player.y)
+
+def on_render(console: tcod.Console, gamemap: GameMap):
     gamemap.render(console=console) 
-    
-    entities = sorted(entities, reverse=True)   #sorts entity by render priority, lowest first
-    #probably need to move this sort somewhere else or get a better way to print
-    for e in entities:
-        #allows bg to be none, so we could take the color of the tile instead
-        console.print(e.x, e.y, e.char, fg=e.color)
 
 
 if __name__ == "__main__":

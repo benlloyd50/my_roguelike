@@ -1,7 +1,8 @@
 import numpy as np #type: ignore
-from typing import Tuple
+from typing import Tuple, List
 import colors as clr
 from tcod.console import Console
+from entity import Entity
 
 #a list of info useful for making maps that resembles the console.rgb type
 tile_graphic = np.dtype(
@@ -21,12 +22,12 @@ map_tile = np.dtype(
 
 
 class GameMap:
-    def __init__(self, width: int, height: int):
+    def __init__(self, width: int, height: int, entities: List[Entity]):
         self.width = width
         self.height = height
         self.game_map = np.full((width, height), fill_value=water, order="F")
-        print(self.game_map.dtype)
         self.conditions = np.full((self.width, self.height), fill_value=True, order="F")
+        self.entities = entities
         #self.conditions2 = np.full((self.width, self.height), fill_value=True, order="F")
 
     def render(self, console: Console) -> None:
@@ -34,7 +35,16 @@ class GameMap:
             condlist=self.conditions,
             choicelist=self.game_map["sprite"],
             default=water['sprite'],
-        ) 
+        )
+
+        self.entities = sorted(self.entities, reverse=True)   #sorts entity by render priority, lowest first
+        for e in self.entities:
+            #allows bg to be none, so we could take the color of the tile instead
+            console.print(e.x, e.y, e.char, fg=e.color)
+
+
+    def is_loc_walkable(self, x: int, y: int):
+        return self.game_map[x, y]['walkable'] 
 
 
 #sprite resembles the tile_graphic np type defined at top of class
