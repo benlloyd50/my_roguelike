@@ -3,10 +3,12 @@ Generates a gamemap object with a set of configurable options
 """
 import tcod
 import tile_types
+import random
 from tcod.noise import Noise
 from gamemap import GameMap
 from typing import List 
 from entity import Entity
+
 
 def generate_worldmap(width: int, height: int, entities: List[Entity], seed: int) -> GameMap:
     """Creates the map """
@@ -35,8 +37,6 @@ def generate_worldmap(width: int, height: int, entities: List[Entity], seed: int
             else:
                 world.tiles[x][y] = tile_types.water
 
-    world = bres_circle(world, 16, 17, 16)
-
     return world
 
 def bres_circle(world: GameMap, xc: int, yc: int, radius: int):
@@ -57,12 +57,14 @@ def bres_circle(world: GameMap, xc: int, yc: int, radius: int):
 
 
 def draw_circle(world: GameMap, xc: int, yc: int, x: int, y: int):
-    world.tiles[xc+x, yc+y] = tile_types.brown_wall 
-    world.tiles[xc-x, yc+y] = tile_types.brown_wall
-    world.tiles[xc+x, yc-y] = tile_types.brown_wall
-    world.tiles[xc-x, yc-y] = tile_types.brown_wall
-    world.tiles[xc+y, yc+x] = tile_types.brown_wall
-    world.tiles[xc-y, yc+x] = tile_types.brown_wall
-    world.tiles[xc+y, yc-x] = tile_types.brown_wall
-    world.tiles[xc-y, yc-x] = tile_types.brown_wall
+    chance = random.random() 
+    #Given a chance can create sort of ruins
+    if chance > .9 : world.tiles[xc+x, yc+y] = tile_types.brown_wall 
+    if chance > .85 : world.tiles[xc-x, yc+y] = tile_types.brown_wall
+    if chance > .8 : world.tiles[xc+x, yc-y] = tile_types.brown_wall
+    if chance > .75 : world.tiles[xc-x, yc-y] = tile_types.brown_wall
+    if chance > .7 : world.tiles[xc+y, yc+x] = tile_types.brown_wall
+    if chance > .65 : world.tiles[xc-y, yc+x] = tile_types.brown_wall
+    if chance > .3 : world.tiles[xc+y, yc-x] = tile_types.brown_wall
+    if chance > .25 : world.tiles[xc-y, yc-x] = tile_types.brown_wall
     return world

@@ -32,7 +32,7 @@ class GameMap:
             console.print(e.x, e.y, e.char, fg=e.color)
 
     def is_loc_walkable(self, x: int, y: int) -> bool:
-        return self.game_map[x, y]['walkable'] and self.inbounds(x, y)
+        return self.tiles[x, y]['walkable'] and self.inbounds(x, y)
 
     def inbounds(self, x: int, y: int) -> bool:
         return 0 <= x < self.width and 0 <= y < self.height

@@ -22,3 +22,8 @@ class Entity:
 
     def __lt__(self: T, other: T) -> bool:
         return self.render_priority < other.render_priority
+
+    def move(self, dx: int, dy: int):
+        """Move entity position relative to where it stands"""
+        self.x += dx
+        self.y += dy
