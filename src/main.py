@@ -1,9 +1,10 @@
 import tcod
 import numpy as np # type: ignore
+import time
 
-from gamemap import GameMap
+# from gamemap import GameMap
+from mapgenerator import generate_worldmap 
 from entity import Entity
-from typing import List
 
 #Constants
 WIDTH, HEIGHT = 90, 51  # Console width and height in tiles.
@@ -27,8 +28,7 @@ def main() -> None:
     bard = Entity(10, 3, 'B', tcod.azure, render_priority=1)
 
     entities = [player, bard] 
-
-    gamemap = GameMap(MAP_WIDTH, MAP_HEIGHT, entities)
+    _gamemap = generate_worldmap(MAP_WIDTH, MAP_HEIGHT, entities, int(time.time()))
 
     # Create a window based on this console and tileset.
     with tcod.context.new_terminal(
@@ -41,7 +41,7 @@ def main() -> None:
         root_console = tcod.Console(WIDTH, HEIGHT, order="F")
         while True:  # Main loop, runs until SystemExit is raised.
             root_console.clear() #wipes the console to just black space
-            on_render(root_console, gamemap)
+            _gamemap.render(console=root_console)
             context.present(root_console)  # Show the console.
 
             # This event loop will wait until at least one event is processed before exiting.
@@ -53,22 +53,13 @@ def main() -> None:
                     raise SystemExit()
                 elif isinstance(event, tcod.event.KeyDown):
                     if event.sym in MOVECOMMANDS:
-                        if can_player_move(player, gamemap): 
-                            player.x += MOVECOMMANDS[event.sym][0]
-                            player.y += MOVECOMMANDS[event.sym][1]
-                        else:
-                            print("You can't walk")
+                        player.x += MOVECOMMANDS[event.sym][0]
+                        player.y += MOVECOMMANDS[event.sym][1]
+                        # else:
+                        #     print("You can't walk")
                     elif event.sym is tcod.event.KeySym.ESCAPE:
                         raise SystemExit()
         # The window will be closed after the above with-block exits.
-
-
-def can_player_move(player: Entity, gamemap: GameMap) -> bool:
-    return gamemap.is_loc_walkable(player.x, player.y)
-
-def on_render(console: tcod.Console, gamemap: GameMap):
-    gamemap.render(console=console) 
-
 
 if __name__ == "__main__":
     main()

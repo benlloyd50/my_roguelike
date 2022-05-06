@@ -1,40 +1,29 @@
+from __future__ import annotations
+
 import numpy as np #type: ignore
-from typing import Tuple, List
-import colors as clr
+from typing import List
+import tile_types
 from tcod.console import Console
 from entity import Entity
-
-#a list of info useful for making maps that resembles the console.rgb type
-tile_graphic = np.dtype(
-    [
-        ("ch", np.int32),
-        ("fg", "3B"),
-        ("bg", "3B")
-    ]
-)
-
-map_tile = np.dtype(
-    [
-        ("walkable", np.bool), 
-        ("sprite", tile_graphic)
-    ]
-)
 
 
 class GameMap:
     def __init__(self, width: int, height: int, entities: List[Entity]):
-        self.width = width
-        self.height = height
-        self.game_map = np.full((width, height), fill_value=water, order="F")
+        self.width, self.height = width, height
+
+        self.tiles = np.full((self.width, self.height), fill_value=tile_types.water, order="F")
         self.conditions = np.full((self.width, self.height), fill_value=True, order="F")
         self.entities = entities
-        #self.conditions2 = np.full((self.width, self.height), fill_value=True, order="F")
 
+    @property
+    def gamemap(self) -> GameMap:
+        return self
+    
     def render(self, console: Console) -> None:
-        console.tiles_rgb[0:self.width, 0:self.height] = np.select(
-            condlist=self.conditions,
-            choicelist=self.game_map["sprite"],
-            default=water['sprite'],
+        console.rgb[0:self.width, 0:self.height] = np.select(
+            condlist=[self.conditions],
+            choicelist=[self.tiles['sprite']],
+            default=tile_types.SHROUD,
         )
 
         self.entities = sorted(self.entities, reverse=True)   #sorts entity by render priority, lowest first
@@ -42,17 +31,8 @@ class GameMap:
             #allows bg to be none, so we could take the color of the tile instead
             console.print(e.x, e.y, e.char, fg=e.color)
 
+    def is_loc_walkable(self, x: int, y: int) -> bool:
+        return self.game_map[x, y]['walkable'] and self.inbounds(x, y)
 
-    def is_loc_walkable(self, x: int, y: int):
-        return self.game_map[x, y]['walkable'] 
-
-
-#sprite resembles the tile_graphic np type defined at top of class
-def new_tile(
-    *,
-    walkable: bool,
-    sprite: Tuple[int, Tuple[int, int, int], Tuple[int, int, int]],
-) -> np.ndarray:
-    return np.array((walkable, sprite), dtype=map_tile)
-
-water = new_tile(walkable=False, sprite=(ord("~"), clr.light_blue, clr.murky_blue))
+    def inbounds(self, x: int, y: int) -> bool:
+        return 0 <= x < self.width and 0 <= y < self.height
