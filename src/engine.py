@@ -5,9 +5,6 @@ from tcod.context import Context
 from tcod.console import Console
 import tcod.event
 
-from gamemap import GameMap
-from entity import Entity
-
 MOVECOMMANDS = {
     tcod.event.KeySym.w: (0, -1),
     tcod.event.KeySym.a: (-1, 0),
@@ -25,20 +22,21 @@ class Engine:
         for event in events:
             context.convert_event(event)  # Sets tile coordinates for mouse events.
             #print(event)  # Print event names and attributes.
-            if isinstance(event, tcod.event.Quit):
-                raise SystemExit()
-            elif isinstance(event, tcod.event.KeyDown):
-                if event.sym in MOVECOMMANDS:
-                    if self.game_map.is_loc_walkable(self.player.x + MOVECOMMANDS[event.sym][0], self.player.y + MOVECOMMANDS[event.sym][1]):
-                        self.player.move(MOVECOMMANDS[event.sym][0], MOVECOMMANDS[event.sym][1])
-                    else:
-                        print("You can't walk")
-                elif event.sym is tcod.event.KeySym.ESCAPE:
+            #extrapolate below to event_handler class that controls state of game
+            match event:
+                case tcod.event.Quit():
                     raise SystemExit()
+                case tcod.event.KeyDown(sym=sym) if sym in MOVECOMMANDS:
+                    if self.game_map.is_loc_walkable(self.player.x + MOVECOMMANDS[sym][0], self.player.y + MOVECOMMANDS[sym][1]):
+                        self.player.move(MOVECOMMANDS[sym][0], MOVECOMMANDS[sym][1])
+                        self.game_map.move_offset(MOVECOMMANDS[sym][0], MOVECOMMANDS[sym][1])
+                    else:
+                        print("You can't walk there")
+                case tcod.event.KeyDown(sym=sym) if sym is tcod.event.KeySym.ESCAPE:
+                    raise SystemExit() 
 
     def render(self, console: Console, context: Context):
         """Draws gamemap, which draws entities internally"""
         console.clear()
         self.game_map.render(console=console)
         context.present(console=console)  # Show the console.
-

@@ -2,13 +2,13 @@ import tcod
 import numpy as np # type: ignore
 import time
 
-from mapgenerator import generate_worldmap 
+from mapgenerator import generate_worldmap
 from entity import Entity
 from engine import Engine
 
 #Constants
 WIDTH, HEIGHT = 90, 51  # Console width and height in tiles.
-MAP_WIDTH, MAP_HEIGHT = 90, 40 #11 rows for ui down the bottom
+MAP_WIDTH, MAP_HEIGHT = 256, 256 #screen uses 90 x 41, however map is larger
 
 
 def main() -> None:
@@ -18,10 +18,13 @@ def main() -> None:
     )
     font_scale = 2 #makes console bigger and thus increase the size of the ascii chars
 
-    player = Entity(0, 0, chr(0x263A), tcod.yellow, render_priority=0) 
+    middle_x = int(90 / 2)
+    middle_y = int(41 / 2)
+
+    player = Entity(middle_x, middle_y, chr(0x263A), tcod.yellow, render_priority=0)
     bard = Entity(10, 3, 'B', tcod.azure, render_priority=1)
 
-    entities = {player, bard} 
+    entities = {player, bard}
     game_map = generate_worldmap(MAP_WIDTH, MAP_HEIGHT, entities, int(time.time()))
     engine = Engine(entities=entities, game_map=game_map, player=player)
 
@@ -39,12 +42,11 @@ def main() -> None:
             #would be wise to limit frames somehow, so an anim that lasts 20 frames is visible for a bit
             frame += 1
             engine.render(console=root_console, context=context)
-            #events are grabbed as they happen and will not hold up the loop so render can be called
-            events = tcod.event.get()
+            #events will be handled as they detected but loop will continue to run 
+            events = tcod.event.wait()
             engine.handle_events(events=events, context=context)
             print(f"{frame = } finished")
         # The window will be closed after the above with-block exits.
 
 if __name__ == "__main__":
     main()
-
