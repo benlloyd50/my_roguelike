@@ -11,11 +11,15 @@ MOVECOMMANDS = {
     tcod.event.KeySym.s: (0, 1),
     tcod.event.KeySym.d: (1, 0),
 }
+DEBUGCOMMANDS = {
+    tcod.event.KeySym.k: 0,
+}
 
 class Engine:
     def __init__(self, entities, game_map, player):
         self.entities = entities
         self.game_map = game_map
+        self.game_map.move_camera_to_player(player.x, player.y)
         self.player = player
 
     def handle_events(self, events, context):
@@ -24,6 +28,8 @@ class Engine:
             #print(event)  # Print event names and attributes.
             #extrapolate below to event_handler class that controls state of game
             match event:
+                case tcod.event.KeyDown(sym=sym) if sym in DEBUGCOMMANDS:
+                    print(f"{self.player.x = }, {self.player.y = }")
                 case tcod.event.Quit():
                     raise SystemExit()
                 case tcod.event.KeyDown(sym=sym) if sym in MOVECOMMANDS:

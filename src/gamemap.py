@@ -1,16 +1,17 @@
 from __future__ import annotations
 
-import numpy as np #type: ignore
 from typing import List, Tuple
-import tile_types
+import numpy as np #type: ignore
+
 from tcod.console import Console
 from entity import Entity
+import tile_types
 
 
 class GameMap:
     def __init__(self, width: int, height: int, entities: List[Entity]):
         self.width, self.height = width, height
-        self.cam_width = 90 #draws 90 pixels starting from x_offset
+        self.cam_width = 91 #draws 90 pixels starting from x_offset
         self.cam_height = 41
         self._x_offset = 0 #is the left most position of what is shown on the camera
         self._y_offset = 0 #is the top most position of what is show on the camera
@@ -27,6 +28,7 @@ class GameMap:
     def x_offset(self):
         return self._x_offset
 
+    #BUG: this needs to account for the padding with, similar to the y_offset
     @x_offset.setter
     def x_offset(self, value: int):
         if value < 0:
@@ -58,7 +60,7 @@ class GameMap:
         return self.y_offset + self.cam_height
     
     def render(self, console: Console) -> None:
-        console.rgb[0:90, 0:41] = np.select(
+        console.rgb[0:91, 0:41] = np.select(
             condlist=[self.conditions[self.x_offset : self.last_x_position, self.y_offset : self.last_y_position]],
             choicelist=[self.tiles[self.x_offset : self.last_x_position, self.y_offset : self.last_y_position]['sprite']],
             default=tile_types.SHROUD,
@@ -67,10 +69,18 @@ class GameMap:
         self.entities = sorted(self.entities, reverse=True)   #sorts entity by render priority, lowest first
         for e in self.entities:
             #allows bg to be none, so we could take the color of the tile instead
-            #compile list of entities inside cam's view somehow
+            # compile list of entities inside cam's view somehow
             # potentially update list as new tiles are explored?
             console.print(*self.world_position_to_camera_positon(e.x, e.y), e.char, fg=e.color)
-    
+
+    def move_camera_to_player(self, x: int, y: int):
+        """Set the camera to have the player (x,y) be the center of the screen"""
+        center_x = int(self.cam_width / 2) + 1
+        center_y = int(self.cam_height / 2) + 1
+        self.x_offset = x - center_x
+        self.y_offset = y - center_y
+
+
     def world_position_to_camera_positon(self, x: int, y: int) -> Tuple(int, int):
         """Converts world position to camera coordinates if in camera view otherwise returns (-1, -1)"""
         #check if world pos is currently visible to the camera, otherwise it has no world position
@@ -79,12 +89,13 @@ class GameMap:
         #convert to cam position
         return (x - self.x_offset, y - self.y_offset)
 
-    def move_offset(self, dx: int, dy: int):
+    def move_offset(self, dx: int, dy: int) -> None:
+        """Move the x and y offsets of the camera by (dx, dy) tiles""" 
         self.x_offset += dx
         self.y_offset += dy
 
     def is_loc_walkable(self, x: int, y: int) -> bool:
-        return self.tiles[x, y]['walkable'] and self.inbounds(x, y)
+        return self.inbounds(x, y) and self.tiles[x, y]['walkable']
 
     def inbounds(self, x: int, y: int) -> bool:
         return 0 <= x < self.width and 0 <= y < self.height

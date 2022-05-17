@@ -4,6 +4,7 @@ Generates a gamemap object with a set of configurable options
 import tcod
 import tile_types
 import random
+from numpy import pad
 from tcod.noise import Noise
 from gamemap import GameMap
 from typing import List 
@@ -37,6 +38,8 @@ def generate_worldmap(width: int, height: int, entities: List[Entity], seed: int
             else:
                 world.tiles[x][y] = tile_types.water
 
+    #not padding on the right or bottom??? 
+    world.tiles = pad(world.tiles, pad_width=((46,46),(21,21)), mode="constant", constant_values=tile_types.water)
     return world
 
 def bres_circle(world: GameMap, xc: int, yc: int, radius: int):

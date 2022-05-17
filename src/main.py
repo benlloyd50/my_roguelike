@@ -7,7 +7,7 @@ from entity import Entity
 from engine import Engine
 
 #Constants
-WIDTH, HEIGHT = 90, 51  # Console width and height in tiles.
+WIDTH, HEIGHT = 91, 51  # Console width and height in tiles.
 MAP_WIDTH, MAP_HEIGHT = 256, 256 #screen uses 90 x 41, however map is larger
 
 
@@ -18,10 +18,7 @@ def main() -> None:
     )
     font_scale = 2 #makes console bigger and thus increase the size of the ascii chars
 
-    middle_x = int(90 / 2)
-    middle_y = int(41 / 2)
-
-    player = Entity(middle_x, middle_y, chr(0x263A), tcod.yellow, render_priority=0)
+    player = Entity(128, 128, chr(0x263A), tcod.yellow, render_priority=0)
     bard = Entity(10, 3, 'B', tcod.azure, render_priority=1)
 
     entities = {player, bard}
