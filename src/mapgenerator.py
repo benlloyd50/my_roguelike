@@ -4,7 +4,7 @@ Generates a gamemap object with a set of configurable options
 import tcod
 import tile_types
 import random
-from numpy import pad
+from numpy import select, ogrid, sqrt, array_equal
 from tcod.noise import Noise
 from gamemap import GameMap
 from typing import List 
@@ -26,7 +26,7 @@ def generate_worldmap(width: int, height: int, entities: List[Entity], seed: int
     # #Bound the samples array from 0 <-> 1
     samples = (samples + 1.0) * .5
 
-    # #Determines a tile for the world map by value of parallel noise value
+    # #Determines a tile for the .world map by value of parallel noise value
     for x in range(width):
         for y in range(height):
             noise_height = samples[y, x]
@@ -38,36 +38,30 @@ def generate_worldmap(width: int, height: int, entities: List[Entity], seed: int
             else:
                 world.tiles[x][y] = tile_types.water
 
-    #not padding on the right or bottom??? 
-    world.tiles = pad(world.tiles, pad_width=((46,46),(21,21)), mode="constant", constant_values=tile_types.water)
-    return world
+    #Create a circle bool array that covers the island
+    circle_mask = create_circular_mask(height, width, radius=128)
+    world.tiles = select(
+        condlist=[circle_mask],
+        choicelist=[world.tiles],
+        default=tile_types.water,
+    )
 
-def bres_circle(world: GameMap, xc: int, yc: int, radius: int):
-    x = 0
-    y = radius
-    d = 3 - 2 * radius
-    world = draw_circle(world, xc, yc, x, y)
-    while y >= x:
-        x += 1
-        if d > 0:
-            y -= 1
-            d = d + 4 * (x - y) + 10
-        else:
-            d = d + 4 * x + 6
-        draw_circle(world, xc, yc, x, y)
+    #I want to iterate every tile and check neighbors for water tiles,
+    #if atleast 3 then turn the tile to sand
+
 
     return world
 
 
-def draw_circle(world: GameMap, xc: int, yc: int, x: int, y: int):
-    chance = random.random() 
-    #Given a chance can create sort of ruins
-    if chance > .9 : world.tiles[xc+x, yc+y] = tile_types.brown_wall 
-    if chance > .85 : world.tiles[xc-x, yc+y] = tile_types.brown_wall
-    if chance > .8 : world.tiles[xc+x, yc-y] = tile_types.brown_wall
-    if chance > .75 : world.tiles[xc-x, yc-y] = tile_types.brown_wall
-    if chance > .7 : world.tiles[xc+y, yc+x] = tile_types.brown_wall
-    if chance > .65 : world.tiles[xc-y, yc+x] = tile_types.brown_wall
-    if chance > .3 : world.tiles[xc+y, yc-x] = tile_types.brown_wall
-    if chance > .25 : world.tiles[xc-y, yc-x] = tile_types.brown_wall
-    return world
+def create_circular_mask(h, w, center=None, radius=None):
+    """Generates a circular mask"""
+    if center is None: # use the middle of the image
+        center = (int(w/2), int(h/2))
+    if radius is None: # use the smallest distance between the center and image walls
+        radius = min(center[0], center[1], w-center[0], h-center[1])
+
+    Y, X = ogrid[:w, :h]
+    dist_from_center = sqrt((X - center[0])**2 + (Y-center[1])**2)
+
+    mask = dist_from_center <= radius
+    return mask
