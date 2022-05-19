@@ -32,9 +32,9 @@ class EscapeAction(Action):
             print(f"{engine._load_name} saved successfully") 
         else: 
             filename = str(input("Please enter a name for your save game: "))
-            if not filename == "":
+            if filename != "":
                 engine.save_as(filename=DIRECTORY + "/../saves/" + filename + ".sav")
-            print(f"{filename} saved successfully")
+                print(f"{filename} saved successfully")
         
         raise SystemExit()
 
