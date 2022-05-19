@@ -4,7 +4,7 @@ Generates a gamemap object with a set of configurable options
 import tcod
 import tile_types
 import random
-from numpy import select, ogrid, sqrt, array_equal
+from numpy import select, ogrid, sqrt
 from tcod.noise import Noise
 from gamemap import GameMap
 from typing import List 

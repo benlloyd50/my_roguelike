@@ -28,7 +28,6 @@ class GameMap:
     def x_offset(self):
         return self._x_offset
 
-    #BUG: this needs to account for the padding with, similar to the y_offset
     @x_offset.setter
     def x_offset(self, value: int):
         if value < 0:
@@ -69,9 +68,12 @@ class GameMap:
         self.entities = sorted(self.entities, reverse=True)   #sorts entity by render priority, lowest first
         for e in self.entities:
             #allows bg to be none, so we could take the color of the tile instead
+            cam_x, cam_y = self.world_position_to_camera_positon(e.x, e.y)
+            if cam_x == -1 and cam_y == -1:
+                continue
             # compile list of entities inside cam's view somehow
             # potentially update list as new tiles are explored?
-            console.print(*self.world_position_to_camera_positon(e.x, e.y), e.char, fg=e.color)
+            console.print(cam_x, cam_y, e.char, fg=e.color)
 
     def move_camera_to_player(self, x: int, y: int):
         """Set the camera to have the player (x,y) be the center of the screen"""

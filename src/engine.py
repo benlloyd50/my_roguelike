@@ -1,48 +1,50 @@
 """ The "Loorna" Engine, an engine that I love
 Manages the game state internally handling gamemap, events, and entities
 """
+from typing import Any, Iterable, Set
 from tcod.context import Context
 from tcod.console import Console
-import tcod.event
+from state_handlers import StateHandler
+from actions import MovementAction, EscapeAction
 
-MOVECOMMANDS = {
-    tcod.event.KeySym.w: (0, -1),
-    tcod.event.KeySym.a: (-1, 0),
-    tcod.event.KeySym.s: (0, 1),
-    tcod.event.KeySym.d: (1, 0),
-}
-DEBUGCOMMANDS = {
-    tcod.event.KeySym.k: 0,
-}
+import pickle
+import lzma
+
+from gamemap import GameMap
+from entity import Entity
 
 class Engine:
-    def __init__(self, entities, game_map, player):
+    def __init__(self, entities : Set[Entity], game_map: GameMap, player : Entity, state_handler : StateHandler, _load_name : str = ""):
         self.entities = entities
         self.game_map = game_map
         self.game_map.move_camera_to_player(player.x, player.y)
         self.player = player
+        self.state_handler = state_handler
+        self._load_name = _load_name
 
-    def handle_events(self, events, context):
+
+    def handle_events(self, events: Iterable[Any], context: Context) -> None:
         for event in events:
             context.convert_event(event)  # Sets tile coordinates for mouse events.
-            #print(event)  # Print event names and attributes.
-            #extrapolate below to event_handler class that controls state of game
-            match event:
-                case tcod.event.KeyDown(sym=sym) if sym in DEBUGCOMMANDS:
-                    print(f"{self.player.x = }, {self.player.y = }")
-                case tcod.event.Quit():
-                    raise SystemExit()
-                case tcod.event.KeyDown(sym=sym) if sym in MOVECOMMANDS:
-                    if self.game_map.is_loc_walkable(self.player.x + MOVECOMMANDS[sym][0], self.player.y + MOVECOMMANDS[sym][1]):
-                        self.player.move(MOVECOMMANDS[sym][0], MOVECOMMANDS[sym][1])
-                        self.game_map.move_offset(MOVECOMMANDS[sym][0], MOVECOMMANDS[sym][1])
-                    else:
-                        print("You can't walk there")
-                case tcod.event.KeyDown(sym=sym) if sym is tcod.event.KeySym.ESCAPE:
-                    raise SystemExit() 
+            print(event)  # Print event names and attributes.
+            
+            action = self.state_handler.dispatch(event)
 
-    def render(self, console: Console, context: Context):
+            if action is None:
+                continue
+            
+            action.perform(self, self.player)
+
+
+    def render(self, console: Console, context: Context) -> None:
         """Draws gamemap, which draws entities internally"""
-        console.clear()
         self.game_map.render(console=console)
         context.present(console=console)  # Show the console.
+        console.clear()
+
+
+    def save_as(self, filename: str) -> None:
+        """Save this Engine instance as a compressed file."""
+        save_data = lzma.compress(pickle.dumps(self))
+        with open(filename, "wb") as f:
+            f.write(save_data)

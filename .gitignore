@@ -3,5 +3,7 @@ __pycache__/
 #the venv, requirements.txt contains dependencies
 rl_env/
 
+saves/
+
 ty-washed-out-16.txt
 Taffer_huge.png
