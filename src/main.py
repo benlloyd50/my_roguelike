@@ -69,7 +69,7 @@ def main() -> None:
         state_handler = StateHandler()
 
         player = Entity(250, 250, chr(0x263A), tcod.yellow, render_priority=0)
-        bard = Entity(10, 3, 'B', tcod.azure, render_priority=1)
+        bard = Entity(255, 250, 'B', tcod.azure, render_priority=1)
 
         entities = {player, bard}
         game_map = generate_worldmap(MAP_WIDTH, MAP_HEIGHT, entities, int(time.time()))

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 from tcod.console import Console
 from entity import Entity
 
@@ -64,8 +64,6 @@ class GameMap:
         return self.y_offset + self.cam_height
     
     def render(self, console: Console) -> None:
-        
-
         console.rgb[self.cam_x_offset : self.cam_x_offset + self.cam_width, self.cam_y_offset :self.cam_y_offset + self.cam_height] = np.select(
             condlist=[self.conditions[self.x_offset : self.last_x_position, self.y_offset : self.last_y_position]],
             choicelist=[self.tiles[self.x_offset : self.last_x_position, self.y_offset : self.last_y_position]['sprite']],
@@ -112,6 +110,12 @@ class GameMap:
         """Move the x and y offsets of the camera by (dx, dy) tiles""" 
         self.x_offset += dx
         self.y_offset += dy
+
+    def get_entity_at_loc(self, x: int, y: int) -> Optional[Entity]:
+        for e in self.entities:
+            if e.x == x and e.y == y:
+                return e
+        return None
 
     def is_loc_walkable(self, x: int, y: int) -> bool:
         return self.inbounds(x, y) and self.tiles[x, y]['walkable']
