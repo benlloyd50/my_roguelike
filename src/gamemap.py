@@ -1,18 +1,22 @@
 from __future__ import annotations
 
-from typing import List, Tuple, Optional
+from typing import Iterable, Iterator, Tuple, Optional, TYPE_CHECKING
 from tcod.console import Console
-from entity import Entity
 
+from entity import Actor
 import numpy as np #type: ignore
 import colors
 import tile_types
 
-
+if TYPE_CHECKING:
+    from entity import Entity
+    from engine import Engine
 
 class GameMap:
-    def __init__(self, width: int, height: int, entities: List[Entity]):
+    def __init__(self, engine: Engine, width: int, height: int, entities: Iterable[Entity]):
         self.width, self.height = width, height
+        self.engine = engine
+
         self.cam_width = 81 
         self.cam_height = 31 
         self.cam_x_offset = 5 
@@ -23,11 +27,15 @@ class GameMap:
 
         self.tiles = np.full((self.width, self.height), fill_value=tile_types.water, order="F")
         self.conditions = np.full((self.width, self.height), fill_value=True, order="F")
-        self.entities = entities
+        self.entities = set(entities)
 
     @property
-    def gamemap(self) -> GameMap:
-        return self
+    def actors(self) -> Iterator[Actor]:
+        yield from(
+            entity
+            for entity in self.entities
+            if isinstance(entity, Actor) and entity.is_alive
+        )
 
     @property
     def x_offset(self):
@@ -62,8 +70,9 @@ class GameMap:
     @property
     def last_y_position(self) -> int:
         return self.y_offset + self.cam_height
-    
+
     def render(self, console: Console) -> None:
+        #Make this less wordy fuck
         console.rgb[self.cam_x_offset : self.cam_x_offset + self.cam_width, self.cam_y_offset :self.cam_y_offset + self.cam_height] = np.select(
             condlist=[self.conditions[self.x_offset : self.last_x_position, self.y_offset : self.last_y_position]],
             choicelist=[self.tiles[self.x_offset : self.last_x_position, self.y_offset : self.last_y_position]['sprite']],
@@ -92,7 +101,8 @@ class GameMap:
         )
 
     def move_camera_to_player(self, x: int, y: int):
-        """Set the camera to have the player (x,y) be the center of the screen"""
+        """Set the camera to have the player (x,y) be the center of the screen
+        x and y should be world coordinates"""
         center_x = int(self.cam_width / 2) + 1
         center_y = int(self.cam_height / 2) + 1
         self.x_offset = x - center_x
@@ -111,14 +121,28 @@ class GameMap:
         self.x_offset += dx
         self.y_offset += dy
 
-    def get_entity_at_loc(self, x: int, y: int) -> Optional[Entity]:
+    def get_blocking_entity_at_loc(self, loc_x: int, loc_y: int) -> Optional[Entity]:
         for e in self.entities:
-            if e.x == x and e.y == y:
+            if ( 
+                e.blocks_movement
+                and e.x == loc_x
+                and e.y == loc_y
+            ) :
                 return e
         return None
 
+    def get_actor_at_loc(self, x: int, y: int) -> Optional[Actor]:
+        for a in self.actors:
+            if a.x == x and a.y == y:
+                return a
+        return None
+
     def is_loc_walkable(self, x: int, y: int) -> bool:
-        return self.inbounds(x, y) and self.tiles[x, y]['walkable']
+        return (
+            self.inbounds(x, y) 
+            and self.tiles[x, y]['walkable'] 
+            and self.get_blocking_entity_at_loc(x, y) is None
+        )
 
     def inbounds(self, x: int, y: int) -> bool:
         return 0 <= x < self.width and 0 <= y < self.height

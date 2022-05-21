@@ -2,13 +2,14 @@ import tcod
 import time
 import pickle
 import lzma
+import sys
 
 from os import listdir
 from os.path import exists, dirname, abspath 
+
 from mapgenerator import generate_worldmap
-from entity import Entity
+from entity import Actor
 from engine import Engine
-from state_handlers import StateHandler
 
 #Constants
 WIDTH, HEIGHT = 91, 51  # Console width and height in tiles.
@@ -28,8 +29,8 @@ def load_game(filename: str) -> Engine:
     with open(filename, "rb") as f:
         engine = pickle.loads(lzma.decompress(f.read()))
     assert isinstance(engine, Engine)
-    engine._load_name = filename
-    print(engine._load_name)
+    engine._loadname = filename
+    print(engine._loadname)
     return engine
 
 
@@ -57,23 +58,32 @@ def main() -> None:
         DIRECTORY + "/../assets/zara_graphic.png", 16, 16, tcod.tileset.CHARMAP_CP437,
     )
     font_scale = 2 #makes console bigger and thus increase the size of the ascii chars
-    
-    #TODO: Integrate into game console
-    filename = view_save_files()
 
-    if exists(path=filename):
-        print("Engine loaded successfully")
-        engine = load_game(filename=filename)
-    else:
+    if sys.argv[1] == "qs": #Quickstart
         print("Starting new game")
-        state_handler = StateHandler()
 
-        player = Entity(250, 250, chr(0x263A), tcod.yellow, render_priority=0)
-        bard = Entity(255, 250, 'B', tcod.azure, render_priority=1)
+        player = Actor(char=chr(0x263A), color=tcod.yellow, name="Adventurer")
+        # bard = Entity(255, 250, 'B', tcod.azure, render_priority=1)
 
-        entities = {player, bard}
-        game_map = generate_worldmap(MAP_WIDTH, MAP_HEIGHT, entities, int(time.time()))
-        engine = Engine(entities=entities, game_map=game_map, player=player, state_handler=state_handler)
+        engine = Engine(player)
+        engine.game_map = generate_worldmap(engine, MAP_WIDTH, MAP_HEIGHT, int(time.time()))
+        engine.game_map.move_camera_to_player(player.x, player.x)
+    else:
+        #TODO: Integrate into game console
+        filename = view_save_files()
+
+        if exists(path=filename):
+            print("Engine loaded successfully")
+            engine = load_game(filename=filename)
+        else:
+            print("Starting new game")
+
+            player = Actor(char=chr(0x263A), color=tcod.yellow, name="Adventurer")
+            # bard = Entity(255, 250, 'B', tcod.azure, render_priority=1)
+
+            engine = Engine(player)
+            engine.game_map = generate_worldmap(engine, MAP_WIDTH, MAP_HEIGHT, int(time.time()))
+            engine.game_map.move_camera_to_player(player.x, player.x)
 
     frame = 0
     # Create a window based on this console and tileset.
@@ -88,8 +98,7 @@ def main() -> None:
         while True:  # Main loop, runs until SystemExit is raised.
             frame += 1
             engine.render(console=root_console, context=context)
-            events = tcod.event.wait()
-            engine.handle_events(events=events, context=context)
+            engine.state_handler.handle_events()
             print(f"{frame = } finished")
         # The window will be closed after the above with-block exits.
 

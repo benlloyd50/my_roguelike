@@ -1,19 +1,22 @@
 """
 Generates a gamemap object with a set of configurable options
 """
+from __future__ import annotations
+
 import tcod
 import tile_types
-import random
 from numpy import select, ogrid, sqrt
 from tcod.noise import Noise
 from gamemap import GameMap
-from typing import List 
-from entity import Entity
+from typing import TYPE_CHECKING
 
+if TYPE_CHECKING:
+    from engine import Engine
 
-def generate_worldmap(width: int, height: int, entities: List[Entity], seed: int) -> GameMap:
+def generate_worldmap(engine: Engine, width: int, height: int, seed: int) -> GameMap:
     """Creates the map """
-    world = GameMap(width, height, entities) #starts the map as just water tiles
+    player = engine.player
+    world = GameMap(engine, width, height, entities=[player]) #starts the map as just water tiles
 
     noise = Noise(
         dimensions = 2,
@@ -49,7 +52,7 @@ def generate_worldmap(width: int, height: int, entities: List[Entity], seed: int
     #I want to iterate every tile and check neighbors for water tiles,
     #if atleast 3 then turn the tile to sand
 
-
+    player.place(256, 256, world)
     return world
 
 
