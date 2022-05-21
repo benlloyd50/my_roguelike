@@ -23,9 +23,8 @@ class Engine:
         self.player = player
         self._loadname = _loadname
         
-    def handle_events(self, events: Iterable[Any], context: Context) -> None:
+    def handle_events(self, events: Iterable[Any]) -> None:
         for event in events:
-            context.convert_event(event)  #gives the event information about the mouse 
             print(event)  # Print event names and attributes.
             
             action = self.state_handler.dispatch(event)
@@ -36,11 +35,10 @@ class Engine:
             action.perform(self, self.player)
 
 
-    def render(self, console: Console, context: Context) -> None:
+    def render(self, console: Console) -> None:
         """Draws gamemap, which draws entities internally"""
         self.game_map.render(console)
-        context.present(console)  # Show the console.
-        console.clear()
+        
 
 
     def save_as(self, filename: str) -> None:

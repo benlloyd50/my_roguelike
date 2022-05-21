@@ -1,13 +1,14 @@
 """
 State Handler Class
-Contains different states for throughout the game, picking up from part 6 to make changes
+Contains different states for throughout the game
 """
 from __future__ import annotations
 
-from typing import Optional, TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING, Union
 
 import tcod.event
 
+import actions
 from actions import Action, EscapeAction, WaitAction, BumpAction
 
 if TYPE_CHECKING:
@@ -38,32 +39,52 @@ WAIT_KEYS = [
     tcod.event.KeySym.p,
 ]
 
+ActionOrHandler = Union[Action, "StateHandler"]
 
-class StateHandler(tcod.event.EventDispatch[Action]):
-    def __init__(self, engine: Engine):
-        self.engine = engine
 
-    def handle_events(self) -> None:
+class BaseStateHandler(tcod.event.EventDispatch[ActionOrHandler]):
+    def handle_events(self, event: tcod.event.Event) -> None:
         """Handles events differently based on the state"""
+        state = self.dispatch(event)
+        if isinstance(state, StateHandler):
+            return state
+        assert not isinstance(state, Action), f"{self!r} can not handle actions"
+        return self
+
+    def on_render(self, console: tcod.Console) -> None:
         raise NotImplementedError()
 
     def ev_quit(self, event: tcod.event.Quit) -> Optional[Action]:
         raise SystemExit()
 
 
+class StateHandler(BaseStateHandler):
+    def __init__(self, engine: Engine):
+        self.engine = engine
+
+    def handle_events(self, event: tcod.event.Event) -> None:
+        """Handles events differently based on the state"""
+        action_or_state = self.dispatch(event)
+        if isinstance(action_or_state, StateHandler):
+            return action_or_state
+        if self.handle_action(action_or_state): #will handle every action but if true means a turn progressed
+            if not self.engine.player.is_alive:
+                return GameOverStateHandler(self.engine)
+            return MainGameStateHandler(self.engine)
+        return self
+
+    def handle_action(self, action: Optional[Action]) -> bool:
+        if action is None:
+            return False 
+
+        action.perform()
+        return True
+
+    def on_render(self, console: tcod.Console) -> None:
+        self.engine.render(console)
+
+
 class MainGameStateHandler(StateHandler):
-    def handle_events(self) -> None:
-        for event in tcod.event.wait():
-            action = self.dispatch(event)
-
-            if action is None:
-                continue
-
-            action.perform()
-            # Handle Enemy Turns
-            # Update FOV
-
-
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[Action]:
         action: Optional[Action] = None
 
@@ -83,15 +104,6 @@ class MainGameStateHandler(StateHandler):
 
 
 class GameOverStateHandler(StateHandler):
-    def handle_events(self) -> None:
-        for event in tcod.event.wait():
-            action = self.dispatch(event)
-
-            if action is None:
-                continue
-
-            action.perform()
-
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[Action]:
         action: Optional[Action] = None
 
