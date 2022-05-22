@@ -5,14 +5,14 @@ Contains different states for throughout the game
 from __future__ import annotations
 
 from typing import Optional, TYPE_CHECKING, Union
-
 import tcod.event
-
 import actions
 from actions import Action, EscapeAction, WaitAction, BumpAction
+import colors
 
 if TYPE_CHECKING:
     from engine import Engine
+
 """
 Commands should be mappable to work with only number keys,
 some low usage commands may be outsourced to keyboard
@@ -63,7 +63,7 @@ class StateHandler(BaseStateHandler):
         self.engine = engine
 
     def handle_events(self, event: tcod.event.Event) -> None:
-        """Handles events differently based on the state"""
+        """Handles events if they are an action or state change"""
         action_or_state = self.dispatch(event)
         if isinstance(action_or_state, StateHandler):
             return action_or_state
@@ -87,7 +87,6 @@ class StateHandler(BaseStateHandler):
 class MainGameStateHandler(StateHandler):
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[Action]:
         action: Optional[Action] = None
-
         key = event.sym
         player = self.engine.player
 
@@ -103,10 +102,30 @@ class MainGameStateHandler(StateHandler):
         return action
 
 
+# class MenuTestStateHandler(StateHandler):
+#     """A test for how making a menu may work"""
+#     def on_render(self, console: tcod.Console) -> None:
+#         super().on_render(console)
+
+#         console.draw_frame(x=int(console.width / 2), y=25, width=50, height=20, title="TestMenu", bg=colors.light_blue)
+
+
+#     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[Action]:
+#         action: Optional[Action] = None
+#         key = event.sym
+#         player = self.engine.player
+
+#         if key is tcod.event.KeySym.c:
+#             return MainGameStateHandler(self.engine)
+#         elif key is tcod.event.KeySym.j:
+#             print("We do a little something")
+
+#         return action
+
+
 class GameOverStateHandler(StateHandler):
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[Action]:
         action: Optional[Action] = None
-
         key = event.sym
         player = self.engine.player
 

@@ -1,7 +1,6 @@
 import tcod
 
-from os import listdir
-from os.path import exists, dirname, abspath 
+from os.path import dirname, abspath 
 
 import state_handlers
 from intromenu import MainMenuStateHandler 

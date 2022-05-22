@@ -34,12 +34,9 @@ class Engine:
             
             action.perform(self, self.player)
 
-
     def render(self, console: Console) -> None:
         """Draws gamemap, which draws entities internally"""
         self.game_map.render(console)
-        
-
 
     def save_as(self, filename: str) -> None:
         """Save this Engine instance as a compressed file."""
