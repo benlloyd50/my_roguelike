@@ -102,5 +102,3 @@ class MovementAction(ActionWithDirection):
             return
 
         self.entity.move(self.dx, self.dy)
-        self.engine.game_map.move_offset(dx=self.dx, dy=self.dy)
-

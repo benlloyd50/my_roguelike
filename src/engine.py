@@ -14,9 +14,11 @@ if TYPE_CHECKING:
     from gamemap import GameMap
     from entity import Actor 
     from state_handlers import StateHandler
+    from camera import Camera
 
 class Engine:
     game_map: GameMap
+    camera: Camera
 
     def __init__(self, player: Actor, _loadname: str = ""):
         self.state_handler: StateHandler = MainGameStateHandler(self)
@@ -36,7 +38,9 @@ class Engine:
 
     def render(self, console: Console) -> None:
         """Draws gamemap, which draws entities internally"""
-        self.game_map.render(console)
+        #self.game_map.render(console)
+        self.camera.center_on_position(self.player.x, self.player.y)
+        self.camera.render(console, self.game_map)
 
     def save_as(self, filename: str) -> None:
         """Save this Engine instance as a compressed file."""

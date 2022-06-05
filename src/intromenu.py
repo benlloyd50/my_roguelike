@@ -9,6 +9,7 @@ import colors
 from os import listdir
 from os.path import dirname, abspath, exists
 
+from camera import Camera
 from entity import Actor
 from typing import Optional
 from engine import Engine
@@ -25,7 +26,10 @@ def setup_game() -> Engine:
 
     engine = Engine(player)
     engine.game_map = generate_worldmap(engine, MAP_WIDTH, MAP_HEIGHT, int(time.time()))
-    engine.game_map.move_camera_to_player(player.x, player.x)
+    #engine.game_map.move_camera_to_player(player.x, player.x)
+
+    engine.camera = Camera(81, 31)
+    engine.camera.center_on_position(player.x, player.y)
 
     return engine
 
