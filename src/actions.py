@@ -1,4 +1,7 @@
-"""Actions"""
+"""
+Actions
+Contains actions of what an actor can perform
+"""
 
 from __future__ import annotations
 
@@ -17,7 +20,6 @@ class Action:
 
     @property
     def engine(self) -> Engine:
-        # return self.entity.gamemap.engine
         return self.entity.gamemap.engine
 
     def perform(self) -> None:
@@ -56,7 +58,6 @@ class WaitAction(Action):
 class ActionWithDirection(Action):
     def __init__(self, entity: Actor, dx: int, dy: int):
         super().__init__(entity)
-
         self.dx = dx
         self.dy = dy
 

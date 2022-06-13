@@ -22,7 +22,7 @@ tile_dt = np.dtype(
 
 
 def new_tile(
-    *,  # Enforce the use of keywords, so that parameter order doesn't matter.
+    *,  
     walkable: int,
     transparent: int,
     sprite: Tuple[int, Tuple[int, int, int], Tuple[int, int, int]],
@@ -31,7 +31,6 @@ def new_tile(
     return np.array((walkable, transparent, sprite), dtype=tile_dt)
 
 
-# SHROUD represents unexplored, unseen tiles
 SHROUD = np.array((ord(" "), (255, 255, 255), (0, 0, 0)), dtype=graphic_dt)
 
 water = new_tile(walkable=False, transparent=True, sprite=(ord("~"), clr.light_blue, clr.murky_blue))

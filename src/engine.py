@@ -1,4 +1,5 @@
-""" The "Loorna" Engine, an engine that I love
+"""
+The "Loorna" Engine, an engine that I love
 Manages the game state internally handling gamemap, events, and entities
 """
 from __future__ import annotations
@@ -38,7 +39,6 @@ class Engine:
 
     def render(self, console: Console) -> None:
         """Draws gamemap, which draws entities internally"""
-        #self.game_map.render(console)
         self.camera.center_on_position(self.player.x, self.player.y)
         self.camera.render(console, self.game_map)
 

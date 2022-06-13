@@ -1,3 +1,7 @@
+"""
+Gamemap is the container for everything that exists in the world
+There will be a parent added in the future for sub maps such as caves
+"""
 from __future__ import annotations
 
 from typing import Iterable, Iterator, Tuple, Optional, TYPE_CHECKING

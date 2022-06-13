@@ -1,3 +1,7 @@
+"""
+Main is the driver and where certain pre loading options will be loaded
+such as font and scale.
+"""
 import tcod
 
 from os.path import dirname, abspath 
@@ -15,12 +19,10 @@ def main() -> None:
         #This is a bit odd since i have to go up a level, may move folders
         dirname(abspath(__file__)) + "/../assets/zara_graphic.png", 16, 16, tcod.tileset.CHARMAP_CP437,
     )
-    font_scale = 2 #makes console bigger and thus increase the size of the ascii chars
-
+    font_scale = 2 
     state: state_handlers.BaseStateHandler = MainMenuStateHandler()
-
     frame = 0
-    # Create a window based on this console and tileset.
+
     with tcod.context.new_terminal(
         WIDTH * font_scale,
         HEIGHT * font_scale,
@@ -29,7 +31,7 @@ def main() -> None:
         vsync=True,
     ) as context:
         root_console = tcod.Console(WIDTH, HEIGHT, order="F")
-        while True:  # Main loop, runs until SystemExit is raised.
+        while True:  
             frame += 1
             root_console.clear()
             state.on_render(console=root_console)
@@ -38,8 +40,7 @@ def main() -> None:
             for event in tcod.event.wait():
                 context.convert_event(event)
                 state = state.handle_events(event)
-            print(f"{frame = } finished")
-        # The window will be closed after the above with-block exits.
+            #print(f"{frame = } finished")
 
 if __name__ == "__main__":
     main()

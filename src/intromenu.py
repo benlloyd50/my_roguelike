@@ -1,3 +1,6 @@
+"""
+IntroMenu controls the setup of a new game and loading previously saved games
+"""
 from __future__ import annotations
 
 import pickle
@@ -26,7 +29,6 @@ def setup_game() -> Engine:
 
     engine = Engine(player)
     engine.game_map = generate_worldmap(engine, MAP_WIDTH, MAP_HEIGHT, int(time.time()))
-    #engine.game_map.move_camera_to_player(player.x, player.x)
 
     engine.camera = Camera(81, 31)
     engine.camera.center_on_position(player.x, player.y)
@@ -71,24 +73,6 @@ class MainMenuStateHandler(state_handlers.BaseStateHandler):
         console.draw_semigraphics(background_image, 0, 0)
 
         #Show menu options
-
-        # for i, text in enumerate(
-        #     [
-
-
-
-
-        #     ]
-        # ):
-        #     console.print(
-        #         console.width // 2,
-        #         console.height // 2 - 10 + i,
-        #         text,
-        #         fg=colors.yellow,
-        #         bg=colors.light_blue,
-        #         alignment=tcod.CENTER,
-        #     )
-
         console.print(
             console.width // 2,
             console.height - 2,
@@ -110,7 +94,6 @@ class MainMenuStateHandler(state_handlers.BaseStateHandler):
                 alignment=tcod.CENTER,
                 bg_blend=tcod.BKGND_ALPHA(64),
             )
-        
 
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[state_handlers.BaseStateHandler]:
         if event.sym in (tcod.event.K_0, tcod.event.K_ESCAPE):
