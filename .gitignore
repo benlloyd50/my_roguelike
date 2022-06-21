@@ -1,6 +1,5 @@
 __pycache__/
 
-#the venv, requirements.txt contains dependencies
 rl_env/
 
 saves/

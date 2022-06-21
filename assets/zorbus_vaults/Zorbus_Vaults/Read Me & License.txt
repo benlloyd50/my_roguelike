@@ -1,0 +1,44 @@
+
+ ZZZZZZZZZZZZZZZZZZZ     OOOOOOOOO     RRRRRRRRRRRRRRRRR   BBBBBBBBBBBBBBBBB   UUUUUUUU     UUUUUUUU   SSSSSSSSSSSSSSS 
+ Z:::::::::::::::::Z   OO:::::::::OO   R::::::::::::::::R  B::::::::::::::::B  U::::::U     U::::::U SS:::::::::::::::S
+ Z:::::::::::::::::Z OO:::::::::::::OO R::::::RRRRRR:::::R B::::::BBBBBB:::::B U::::::U     U::::::US:::::SSSSSS::::::S
+ Z:::ZZZZZZZZ:::::Z O:::::::OOO:::::::ORR:::::R     R:::::RBB:::::B     B:::::BUU:::::U     U:::::UUS:::::S     SSSSSSS
+ ZZZZZ     Z:::::Z  O::::::O   O::::::O  R::::R     R:::::R  B::::B     B:::::B U:::::U     U:::::U S:::::S            
+         Z:::::Z    O:::::O     O:::::O  R::::R     R:::::R  B::::B     B:::::B U:::::D     D:::::U S:::::S            
+        Z:::::Z     O:::::O     O:::::O  R::::RRRRRR:::::R   B::::BBBBBB:::::B  U:::::D     D:::::U  S::::SSSS         
+       Z:::::Z      O:::::O     O:::::O  R:::::::::::::RR    B:::::::::::::BB   U:::::D     D:::::U   SS::::::SSSSS    
+      Z:::::Z       O:::::O     O:::::O  R::::RRRRRR:::::R   B::::BBBBBB:::::B  U:::::D     D:::::U     SSS::::::::SS  
+     Z:::::Z        O:::::O     O:::::O  R::::R     R:::::R  B::::B     B:::::B U:::::D     D:::::U        SSSSSS::::S 
+    Z:::::Z         O:::::O     O:::::O  R::::R     R:::::R  B::::B     B:::::B U:::::D     D:::::U             S:::::S
+  ZZ:::::Z     ZZZZZO::::::O   O::::::O  R::::R     R:::::R  B::::B     B:::::B U::::::U   U::::::U             S:::::S
+ Z::::::ZZZZZZZZ:::ZO:::::::OOO:::::::ORR:::::R     R:::::RBB:::::BBBBBB::::::B U:::::::UUU:::::::U SSSSSSS     S:::::S
+ Z:::::::::::::::::Z OO:::::::::::::OO R::::::R     R:::::RB:::::::::::::::::B   UU:::::::::::::UU  S::::::SSSSSS:::::S
+ Z:::::::::::::::::Z   OO:::::::::OO   R::::::R     R:::::RB::::::::::::::::B      UU:::::::::UU    S:::::::::::::::SS 
+ ZZZZZZZZZZZZZZZZZZZ     OOOOOOOOO     RRRRRRRR     RRRRRRRBBBBBBBBBBBBBBBBB         UUUUUUUUU       SSSSSSSSSSSSSSS   
+
+
+These are ASCII vault / prefab maps from the roguelike game Zorbus (www.zorbus.net).
+
+They're completely free to use in any project, free or commercial, edited or as-is. No need to credit or mention anything.
+
+License:
+Public Domain
+CC0
+https://creativecommons.org/publicdomain/zero/1.0/
+
+
+See "Preview.png" file for a graphical preview (the image is huge, and might not open in all graphics programs).
+
+
+Check the "Separate_files.zip" archive if you want the prefabs as separate files. 
+The separate files have these identifiers:
+- ca = caches = small areas behind a secret door
+- sa = ambush areas
+- sp = specials = hallways, crossroads, dividers, etc. areas
+- va = vaults
+- vp = prisons
+- xx = specials = areas for the shop / endgame levels
+
+
+joonas.hirvonen@pp.inet.fi
+www.zorbus.net

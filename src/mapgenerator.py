@@ -2,8 +2,10 @@
 Generates a gamemap object with a set of configurable options
 - Perlin Noise
 - Cellular Automata (Coming Soonish)
+- Prefabs
 """
 from __future__ import annotations
+import random
 
 import tcod
 import tile_types
@@ -11,6 +13,7 @@ from numpy import select, ogrid, sqrt
 from tcod.noise import Noise
 from gamemap import GameMap
 from typing import TYPE_CHECKING
+from tools import prefab_loader
 
 if TYPE_CHECKING:
     from engine import Engine
@@ -54,7 +57,25 @@ def generate_worldmap(engine: Engine, width: int, height: int, seed: int) -> Gam
     #I want to iterate every tile and check neighbors for water tiles,
     #if atleast 3 then turn the tile to sand
 
-    player.place(256, 256, world)
+    world = place_prefabs(world)
+
+    place_player_on_walkable(world, player)
+    return world
+
+def place_player_on_walkable(world, player):
+    x = 256
+    y = 256
+    isPlaced = False
+    while not isPlaced:
+        if not world.tiles[x, y]['walkable']:
+            chance = random.random()
+            if chance >= .5:
+                x += 1
+            else:
+                y += 1
+        else:
+            player.place(x, y, world) 
+            isPlaced = True
     return world
 
 def create_circular_mask(h, w, center=None, radius=None):
@@ -72,4 +93,22 @@ def create_circular_mask(h, w, center=None, radius=None):
 
 def cellular_automata_pass(gamemap: GameMap) -> GameMap:
     #DO some cellular stuff here
+    return gamemap
+
+def place_prefabs(gamemap: GameMap) -> GameMap:
+    prefabs = prefab_loader.load_prefabs()
+    loc_x = 230
+    loc_y = 256
+    for y, row in enumerate(prefabs[439]):
+        for x, letter in enumerate(row):
+            chance_to_place = random.random()
+            if letter == ' ':
+                continue
+            elif letter == '#':
+                if chance_to_place < .05:
+                    continue
+                gamemap.tiles[x + loc_x][y + loc_y] = tile_types.brown_wall
+            elif letter == '.':
+                continue
+
     return gamemap

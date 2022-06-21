@@ -20,7 +20,7 @@ from mapgenerator import generate_worldmap
 import state_handlers
 
 MAP_WIDTH, MAP_HEIGHT = 500, 500 #screen uses 90 x 41, however map is larger
-background_image = tcod.image.load(dirname(abspath(__file__)) + "/../assets/menu_background.png")[:, :, :3]
+background_image = tcod.image.load(dirname(abspath(__file__)) + "/../assets/images/menu_background.png")[:, :, :3]
 
 def setup_game() -> Engine:
     """Returns an engine set to the default new game settings"""

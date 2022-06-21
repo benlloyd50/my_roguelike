@@ -12,16 +12,16 @@ from intromenu import MainMenuStateHandler
 #Constants
 WIDTH, HEIGHT = 91, 51  # Console width and height in tiles.
 
-
 def main() -> None:
-    # Load the font, a 32 by 8 tile font with libtcod's CP437 character layout.
     tileset = tcod.tileset.load_tilesheet(
-        #This is a bit odd since i have to go up a level, may move folders
-        dirname(abspath(__file__)) + "/../assets/zara_graphic.png", 16, 16, tcod.tileset.CHARMAP_CP437,
+        "assets/tilesets/zara_graphic.png", 
+        16, 16, 
+        tcod.tileset.CHARMAP_CP437,
     )
-    font_scale = 2 
-    state: state_handlers.BaseStateHandler = MainMenuStateHandler()
+    font_scale = 1 
     frame = 0
+
+    state: state_handlers.BaseStateHandler = MainMenuStateHandler()
 
     with tcod.context.new_terminal(
         WIDTH * font_scale,
