@@ -3,6 +3,7 @@ from typing import Dict, List, Tuple
 from extensions import is_null_or_space
 from tcod.console import rgb_graphic
 import numpy as np
+# import tile_types
 
 # PickNewRoom = 1
 # NavigateOrJson = 2
