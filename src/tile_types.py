@@ -36,4 +36,7 @@ SHROUD = np.array((ord(" "), (255, 255, 255), (0, 0, 0)), dtype=graphic_dt)
 water = new_tile(walkable=False, transparent=True, sprite=(ord("~"), clr.light_blue, clr.murky_blue))
 grass = new_tile(walkable=True, transparent=True,sprite=(ord("\""), clr.light_green, clr.dark_green))
 sand = new_tile(walkable=True, transparent=True, sprite=(ord("."), clr.light_brown, clr.yellow))
-brown_wall = new_tile(walkable=False, transparent=False, sprite=(ord("#"), clr.light_brown, clr.dark_brown))
+grey_wall = new_tile(walkable=False, transparent=False, sprite=(ord("#"), clr.gray_orange, clr.dark_gray))
+gray_floor = new_tile(walkable=True, transparent=True, sprite=(ord("."), clr.light_brown, clr.brown))
+
+remove_me = new_tile(walkable=False, transparent=False, sprite=(ord(' '), clr.testing_purple, clr.testing_purple))

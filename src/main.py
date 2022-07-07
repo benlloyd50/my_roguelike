@@ -4,8 +4,6 @@ such as font and scale.
 """
 import tcod
 
-from os.path import dirname, abspath 
-
 import state_handlers
 from intromenu import MainMenuStateHandler 
 

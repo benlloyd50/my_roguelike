@@ -13,7 +13,7 @@ from numpy import select, ogrid, sqrt
 from tcod.noise import Noise
 from gamemap import GameMap
 from typing import TYPE_CHECKING
-from tools import prefab_loader
+# from tools import prefab_loader
 
 if TYPE_CHECKING:
     from engine import Engine
@@ -34,7 +34,7 @@ def generate_worldmap(engine: Engine, width: int, height: int, seed: int) -> Gam
     #Bound the samples array from 0 <-> 1
     samples = (samples + 1.0) * .5
 
-    #Determines a tile for the .world map by value of parallel noise value
+    #Determines a tile for the world map by value of parallel noise value
     for x in range(width):
         for y in range(height):
             noise_height = samples[y, x]
@@ -57,7 +57,7 @@ def generate_worldmap(engine: Engine, width: int, height: int, seed: int) -> Gam
     #I want to iterate every tile and check neighbors for water tiles,
     #if atleast 3 then turn the tile to sand
 
-    world = place_prefabs(world)
+    # world = place_prefabs(world)
 
     place_player_on_walkable(world, player)
     return world
@@ -95,20 +95,20 @@ def cellular_automata_pass(gamemap: GameMap) -> GameMap:
     #DO some cellular stuff here
     return gamemap
 
-def place_prefabs(gamemap: GameMap) -> GameMap:
-    prefabs = prefab_loader.load_prefabs()
-    loc_x = 230
-    loc_y = 256
-    for y, row in enumerate(prefabs[439]):
-        for x, letter in enumerate(row):
-            chance_to_place = random.random()
-            if letter == ' ':
-                continue
-            elif letter == '#':
-                if chance_to_place < .05:
-                    continue
-                gamemap.tiles[x + loc_x][y + loc_y] = tile_types.brown_wall
-            elif letter == '.':
-                continue
+# def place_prefabs(gamemap: GameMap) -> GameMap:
+#     prefabs = prefab_loader.load_prefabs()
+#     loc_x = 230
+#     loc_y = 256
+#     for y, row in enumerate(prefabs[439]):
+#         for x, letter in enumerate(row):
+#             chance_to_place = random.random()
+#             if letter == ' ':
+#                 continue
+#             elif letter == '#':
+#                 if chance_to_place < .05:
+#                     continue
+#                 gamemap.tiles[x + loc_x][y + loc_y] = tile_types.brown_wall
+#             elif letter == '.':
+#                 continue
 
-    return gamemap
+#     return gamemap
