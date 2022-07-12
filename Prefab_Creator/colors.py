@@ -1,5 +1,6 @@
+
 """
-Colors to be used in various parts of the game instead of tcod defined colors
+Colors for Prefab Creator that include game colors as well as debug/misc colors not used in the game itself
 """
 
 #Colors are from ty-washed-out-16 palette
@@ -23,3 +24,6 @@ gray_orange = (138, 127, 108)
 murky_red = (129, 78, 74)
 maroon = (69, 39, 39)
 black = (0, 0, 0)
+
+#used for only testing purposes hence the testing prefix
+testing_purple = (216, 191, 216)

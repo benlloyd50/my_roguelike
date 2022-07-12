@@ -1,3 +1,7 @@
+""" 
+Tile types used for making maps in the Prefab Creator
+These include some debug/misc tiles but tiles intended for the player to see should be copied to tile_types.py in the src folder
+"""
 from typing import Tuple
 import colors as clr
 import numpy as np
@@ -34,7 +38,9 @@ def new_tile(
 SHROUD = np.array((ord(" "), (255, 255, 255), (0, 0, 0)), dtype=graphic_dt)
 
 water = new_tile(walkable=False, transparent=True, sprite=(ord("~"), clr.light_blue, clr.murky_blue))
-grass = new_tile(walkable=True, transparent=True, sprite=(ord("\""), clr.light_green, clr.dark_green))
+grass = new_tile(walkable=True, transparent=True,sprite=(ord("\""), clr.light_green, clr.dark_green))
 sand = new_tile(walkable=True, transparent=True, sprite=(ord("."), clr.light_brown, clr.yellow))
-gray_wall = new_tile(walkable=False, transparent=False, sprite=(ord("#"), clr.gray_orange, clr.dark_gray))
-gray_floor = new_tile(walkable=True, transparent=True, sprite=(ord("."), clr.light_brown, clr.brown))
+gray_wall = new_tile(walkable=False, transparent=False, sprite=(ord("*"), clr.light_brown, clr.brown))
+gray_floor = new_tile(walkable=True, transparent=True, sprite=(ord("."), clr.gray_orange, clr.dark_gray))
+
+remove_me = new_tile(walkable=False, transparent=False, sprite=(ord(' '), clr.testing_purple, clr.testing_purple))

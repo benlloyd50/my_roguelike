@@ -1,9 +1,14 @@
+"""
+Backend for the Prefab Creator
+"""
 from json import dump, load
-from typing import Dict, List, Tuple
-from extensions import is_null_or_space
-from tcod.console import rgb_graphic
+from typing import Dict, List, Optional, Tuple
+
 import numpy as np
-# import tile_types
+from tcod.console import rgb_graphic
+
+import tile_types
+from extensions import is_null_or_space
 
 # PickNewRoom = 1
 # NavigateOrJson = 2
@@ -11,11 +16,10 @@ import numpy as np
 # Reset = 4
 
 class PrefabLoader:
-    room_type: str
-    room_index: int
-
     def __init__(self):
         self.prefab_collection = self.load_prefabs()
+        self.room_type : Optional[str]
+        self.room_index : Optional[int]
 
     def len_dict_list_for(self, key: str) -> int:
         return len(self.prefab_collection[key]) - 1
@@ -36,18 +40,21 @@ class PrefabLoader:
     def room_types(self) -> str:
         return self.prefab_collection.keys()
 
+    def change_room_index(self, value: int) -> None:
+        self.room_index = min(max(self.room_index + value, 0), self.len_dict_list_for(self.room_type))
+        
     def room_to_ndarray(self) -> np.ndarray:
         room_list = [list(line) for line in self.room_selected]
-        room_tiles = np.full((self.room_width, self.room_height), fill_value=np.array((ord(' '), (255, 255, 255), (0, 0, 0)), dtype=rgb_graphic), order="F")
-        # room_tiles = np.full((self.room_width, self.room_height), fill_value=tile_types.remove_me, order="F")
+        # room_tiles = np.full((self.room_width, self.room_height), fill_value=np.array((ord(' '), (255, 255, 255), (0, 0, 0)), dtype=rgb_graphic), order="F")
+        room_tiles = np.full((self.room_width, self.room_height), fill_value=tile_types.remove_me, order="F")
         for y, row in enumerate(room_list):
             for x, col in enumerate(row):
                 if room_list[y][x] == '#':
-                    room_tiles[x, y] = np.array((ord('#'), (255, 255, 255), (0, 0, 0)), dtype=rgb_graphic)
-                    # room_tiles[x, y] = tile_types.gray_wall
+                    # room_tiles[x, y] = np.array((ord('#'), (255, 255, 255), (0, 0, 0)), dtype=rgb_graphic)
+                    room_tiles[x, y] = tile_types.gray_wall
                 elif room_list[y][x] == '.':
-                    room_tiles[x, y] = np.array((ord('.'), (105, 105, 105), (0, 0, 0)), dtype=rgb_graphic)
-                    # room_tiles[x, y] = tile_types.gray_floor
+                    # room_tiles[x, y] = np.array((ord('.'), (105, 105, 105), (0, 0, 0)), dtype=rgb_graphic)
+                    room_tiles[x, y] = tile_types.gray_floor
 
         return room_tiles
 
