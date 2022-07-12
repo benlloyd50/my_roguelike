@@ -4,21 +4,23 @@ Effects should be applied to the camera instead of the gamemap directly
 """
 from __future__ import annotations
 
-import tile_types
-from typing import Tuple
-from numpy import select 
-from gamemap import GameMap
+from typing import Optional, Tuple
+
+from numpy import select
 from tcod.console import Console
 
-class Camera:
-    world_offset_x: int 
-    world_offset_y: int
+import tile_types
+from gamemap import GameMap
 
+
+class Camera:
     def __init__(self, width: int, height: int, x: int = 5, y: int = 1) -> None:
         self.width = width
         self.height = height
         self.console_pos_x = x
         self.console_pos_y = y
+        self.world_offset_x = Optional[int]
+        self.world_offset_y = Optional[int]
 
     @property
     def last_x_position(self) -> int:
@@ -54,8 +56,3 @@ class Camera:
         if not (self.world_offset_x <= x < self.last_x_position and self.world_offset_y <= y < self.last_y_position):
             return (-1, -1)
         return (x - self.world_offset_x + self.console_pos_x, y - self.world_offset_y + self.console_pos_y)
-
-    def move_offset(self, dx: int, dy: int) -> None:
-        """Move the x and y offsets of the camera by (dx, dy) tiles""" 
-        self.x_offset += dx
-        self.y_offset += dy

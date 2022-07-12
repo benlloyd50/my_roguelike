@@ -1,6 +1,8 @@
 from typing import Tuple
-import colors as clr
+
 import numpy as np
+
+import colors as clr
 
 # Tile graphics structured type compatible with Console.tiles_rgb.
 graphic_dt = np.dtype(

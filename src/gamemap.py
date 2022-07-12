@@ -4,17 +4,16 @@ There will be a parent added in the future for sub maps such as caves
 """
 from __future__ import annotations
 
-from typing import Iterable, Iterator, Tuple, Optional, TYPE_CHECKING
-from tcod.console import Console
+from typing import TYPE_CHECKING, Iterable, Iterator, Optional
 
-from entity import Actor
-import numpy as np #type: ignore
-import colors
+import numpy as np  # type: ignore
+
 import tile_types
+from entity import Actor
 
 if TYPE_CHECKING:
-    from entity import Entity
     from engine import Engine
+    from entity import Entity
 
 class GameMap:
     def __init__(self, engine: Engine, width: int, height: int, entities: Iterable[Entity]):
@@ -51,8 +50,8 @@ class GameMap:
 
     def is_loc_walkable(self, x: int, y: int) -> bool:
         return (
-            self.inbounds(x, y) 
-            and self.tiles[x, y]['walkable'] 
+            self.inbounds(x, y)
+            and self.tiles[x, y]['walkable']
             and self.get_blocking_entity_at_loc(x, y) is None
         )
 

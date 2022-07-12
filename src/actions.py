@@ -36,15 +36,15 @@ class Action:
 
 class EscapeAction(Action):
     def perform(self) -> None:
-        DIRECTORY = dirname(abspath(__file__))
-        #TODO: Integrate into the game console 
-        if self.engine._loadname.split(sep='/')[-1] in listdir(DIRECTORY + "/../saves/"):
-            self.engine.save_as(filename=self.engine._loadname)
-            print(f"{self.engine._loadname} saved successfully") 
+        directory = dirname(abspath(__file__))
+        #TODO: Integrate into the game console
+        if self.engine.loadname.split(sep='/')[-1] in listdir(directory + "/../saves/"):
+            self.engine.save_as(filename=self.engine.loadname)
+            print(f"{self.engine.loadname} saved successfully") 
         else: 
             filename = str(input("Please enter a name for your save game: "))
             if filename != "":
-                self.engine.save_as(filename=DIRECTORY + "/../saves/" + filename + ".sav")
+                self.engine.save_as(filename=directory + "/../saves/" + filename + ".sav")
                 print(f"{filename} saved successfully")
         
         raise SystemExit()

@@ -3,21 +3,21 @@ IntroMenu controls the setup of a new game and loading previously saved games
 """
 from __future__ import annotations
 
-import pickle
 import lzma
-import tcod
+import pickle
 import time
-import colors
-
 from os import listdir
-from os.path import dirname, abspath, exists
-
-from camera import Camera
-from entity import Actor
+from os.path import abspath, dirname, exists
 from typing import Optional
-from engine import Engine
-from mapgenerator import generate_worldmap
+
+import tcod
+
+import colors
 import state_handlers
+from camera import Camera
+from engine import Engine
+from entity import Actor
+from mapgenerator import generate_worldmap
 
 MAP_WIDTH, MAP_HEIGHT = 500, 500 #screen uses 90 x 41, however map is larger
 background_image = tcod.image.load(dirname(abspath(__file__)) + "/../assets/images/menu_background.png")[:, :, :3]
@@ -48,24 +48,24 @@ def load_game(filename: str) -> Engine:
     with open(filename, "rb") as f:
         engine = pickle.loads(lzma.decompress(f.read()))
     assert isinstance(engine, Engine)
-    engine._loadname = filename
-    print(engine._loadname)
+    engine.loadname = filename
+    print(engine.loadname)
     return engine
 
 
 def view_save_files():
-    DIRECTORY = dirname(abspath(__file__))
+    directory = dirname(abspath(__file__))
     #Preview saves folder
-    save_files = listdir(DIRECTORY + "/../saves/")
-    for idx, sf in enumerate(save_files):
-        name = sf.split(sep='.')[0]
+    save_files = listdir(directory + "/../saves/")
+    for idx, save in enumerate(save_files):
+        name = save.split(sep='.')[0]
         print(f"{idx + 1}) " + name)
 
     filename = str(input("Enter a save file name or press [ENTER]: "))
     if filename == "":
-        return "" 
+        return ""
 
-    return str(DIRECTORY + "/../saves/" +filename + ".sav")
+    return str(directory + "/../saves/" +filename + ".sav")
 
 class MainMenuStateHandler(state_handlers.BaseStateHandler):
     def on_render(self, console: tcod.Console) -> None:
@@ -98,9 +98,8 @@ class MainMenuStateHandler(state_handlers.BaseStateHandler):
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[state_handlers.BaseStateHandler]:
         if event.sym in (tcod.event.K_0, tcod.event.K_ESCAPE):
             raise SystemExit()
-        elif event.sym == tcod.event.K_l:
+        if event.sym == tcod.event.K_l:
             view_save_files()
         elif event.sym == tcod.event.K_n:
             return state_handlers.MainGameStateHandler(setup_game())
         return None
-

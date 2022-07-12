@@ -5,30 +5,33 @@ Generates a gamemap object with a set of configurable options
 - Prefabs
 """
 from __future__ import annotations
+
 import random
+from typing import TYPE_CHECKING
 
 import tcod
-import tile_types
-from numpy import select, ogrid, sqrt
+from numpy import ogrid, select, sqrt
 from tcod.noise import Noise
+
+import tile_types
 from gamemap import GameMap
-from typing import TYPE_CHECKING
+
 # from tools import prefab_loader
 
 if TYPE_CHECKING:
     from engine import Engine
 
 def generate_worldmap(engine: Engine, width: int, height: int, seed: int) -> GameMap:
-    """Creates the map """
+    """Creates the world on its top most level"""
     player = engine.player
     world = GameMap(engine, width, height, entities=[player]) #starts the map as just water tiles
 
     noise = Noise(
         dimensions = 2,
-        hurst = .6, 
+        hurst = .6,
         lacunarity = 3.0,
         octaves = 5.0,
-        seed = seed, 
+        seed = seed,
     )
     samples = noise[tcod.noise.grid(shape=(width, height), scale=.1, origin=(0,0))]
     #Bound the samples array from 0 <-> 1
@@ -65,8 +68,8 @@ def generate_worldmap(engine: Engine, width: int, height: int, seed: int) -> Gam
 def place_player_on_walkable(world, player):
     x = 256
     y = 256
-    isPlaced = False
-    while not isPlaced:
+    is_placed = False
+    while not is_placed:
         if not world.tiles[x, y]['walkable']:
             chance = random.random()
             if chance >= .5:
@@ -74,19 +77,19 @@ def place_player_on_walkable(world, player):
             else:
                 y += 1
         else:
-            player.place(x, y, world) 
-            isPlaced = True
+            player.place(x, y, world)
+            is_placed = True
     return world
 
 def create_circular_mask(h, w, center=None, radius=None):
     """Generates a circular mask"""
     if center is None: # use the middle of the image
-        center = (int(w/2), int(h/2))
+        center = (int(w / 2), int(h / 2))
     if radius is None: # use the smallest distance between the center and image walls
         radius = min(center[0], center[1], w - center[0], h - center[1])
 
-    Y, X = ogrid[:w, :h]
-    dist_from_center = sqrt((X - center[0])**2 + (Y-center[1])**2)
+    y, x = ogrid[:w, :h]
+    dist_from_center = sqrt((x - center[0])**2 + (y - center[1])**2)
 
     mask = dist_from_center <= radius
     return mask

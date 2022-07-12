@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import copy
-from typing import Tuple, TypeVar, Optional, Type, TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional, Tuple, TypeVar
 
 if TYPE_CHECKING:
     from gamemap import GameMap
@@ -88,5 +88,5 @@ class Actor(Entity): #Sort of entities but they do more than that
 
     @property
     def is_alive(self) -> bool:
-        """Returns true as long as this actor can perform actions, which is always I have no health"""
-        return bool(True)
+        """Returns true as long as this actor can perform actions"""
+        return True

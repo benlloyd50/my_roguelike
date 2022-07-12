@@ -4,25 +4,23 @@ Contains different states for throughout the game
 """
 from __future__ import annotations
 
-from typing import Optional, TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Optional, Union
+
 import tcod.event
-import actions
-from actions import Action, EscapeAction, WaitAction, BumpAction
-import colors
+
+from actions import Action, BumpAction, EscapeAction, WaitAction
 
 if TYPE_CHECKING:
     from engine import Engine
 
-"""
-Commands should be mappable to work with only number keys,
-some low usage commands may be outsourced to keyboard
-"""
+# Commands should be mappable to work with only number keys,
+# some low usage commands may be outsourced to keyboard
 MOVE_KEYS = {
     tcod.event.KeySym.w: (0, -1),
     tcod.event.KeySym.a: (-1, 0),
     tcod.event.KeySym.s: (0, 1),
     tcod.event.KeySym.d: (1, 0),
-    #numbers
+    # numbers
     tcod.event.KeySym.N8: (0, -1),
     tcod.event.KeySym.N4: (-1, 0),
     tcod.event.KeySym.N6: (1, 0),
@@ -43,7 +41,7 @@ ActionOrHandler = Union[Action, "StateHandler"]
 
 
 class BaseStateHandler(tcod.event.EventDispatch[ActionOrHandler]):
-    def handle_events(self, event: tcod.event.Event) -> None:
+    def handle_events(self, event: tcod.event.Event) -> ActionOrHandler:
         """Handles events differently based on the state"""
         state = self.dispatch(event)
         if isinstance(state, StateHandler):
@@ -62,20 +60,21 @@ class StateHandler(BaseStateHandler):
     def __init__(self, engine: Engine):
         self.engine = engine
 
-    def handle_events(self, event: tcod.event.Event) -> None:
+    def handle_events(self, event: tcod.event.Event) -> ActionOrHandler:
         """Handles events if they are an action or state change"""
         action_or_state = self.dispatch(event)
         if isinstance(action_or_state, StateHandler):
             return action_or_state
-        if self.handle_action(action_or_state): #will handle every action but if true means a turn progressed
+        if self.handle_action(action_or_state):  # will handle every action but if true means a turn progressed
             if not self.engine.player.is_alive:
                 return GameOverStateHandler(self.engine)
             return MainGameStateHandler(self.engine)
         return self
 
-    def handle_action(self, action: Optional[Action]) -> bool:
+    @staticmethod
+    def handle_action(action: Optional[Action]) -> bool:
         if action is None:
-            return False 
+            return False
 
         action.perform()
         return True
