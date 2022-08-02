@@ -3,7 +3,7 @@ Tile types used for making maps in the Prefab Creator
 These include some debug/misc tiles but tiles intended for the player to see should be copied to tile_types.py in the src folder
 """
 from typing import Tuple
-import colors as clr
+import Pcolors as clr
 import numpy as np
 
 # Tile graphics structured type compatible with Console.tiles_rgb.
@@ -44,3 +44,4 @@ gray_wall = new_tile(walkable=False, transparent=False, sprite=(ord("*"), clr.li
 gray_floor = new_tile(walkable=True, transparent=True, sprite=(ord("."), clr.gray_orange, clr.dark_gray))
 
 remove_me = new_tile(walkable=False, transparent=False, sprite=(ord(' '), clr.testing_purple, clr.testing_purple))
+source_tile = new_tile(walkable=False, transparent=False, sprite=(ord("+"), clr.testing_purple, clr.orange))
